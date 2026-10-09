@@ -1,154 +1,100 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AcademyApp.data;
+
+
 
 namespace AcademyApp
 {
-    class Program
+    internal class Program
     {
+        static string conn_str = "Data Source=COMP7A2\\SQLEXPRESS;" +
+                              "Initial Catalog=Academy;" +
+                              "Integrated Security=True;" +
+                              "TrustServerCertificate=True;";
+
+        static Studentrepos student_repo = new Studentrepos(conn_str);
+        static GroupRepos group_repo = new GroupRepos(conn_str);
         static void Main(string[] args)
         {
+
             bool is_running = true;
-            string conn_str = ConnectDB();
-            AddGroup(conn_str, "9/3-РПО-24/1");
-            AddStudent(conn_str, "Ксения", "Адаменко", "20", "1");
+
+
 
             while (is_running)
             {
-                Console.WriteLine(" 1  Просмотреть всех студентов");
-                Console.WriteLine(" 2  Найти студента по имени");
+                Console.WriteLine("1. Просмотр всех студентов");
+                Console.WriteLine("2. Найти студента по номеру");
+                Console.WriteLine("3. Просмотр всех групп учащихся");
+                Console.WriteLine("4. Добавить cтудента");
+                Console.Write("Введите номер действия: ");
+                string choise = Console.ReadLine();
 
-                string choice = Console.ReadLine();
-
-                switch (choice)
+                switch (choise)
                 {
                     case "1":
-                        ShowAllStudents(conn_str);
+                        ShowAllStudents();
                         break;
                     case "2":
-                        Console.WriteLine(" Введите имя студента");
-                        string name = Console.ReadLine();
-                        FindStudentByName(conn_str, name);
+                        ShowStudentById();
                         break;
-                    case "9":
-                        is_running = false;
+                    case "3":
+                        ShowAllGroups();
+                        break;
+                    case "4":
+                        CreateStudent();
                         break;
                     default:
-                        Console.WriteLine("Введите номер действия!");
+                        Console.WriteLine("Неверный ввод. Введите 1 или 0.");
                         break;
-
                 }
 
                 if (is_running)
                 {
-                    Console.WriteLine("Нажмите любую кнопку для продолжения!");
+                    Console.WriteLine("\nНажмите любую кнопку для продолжения...");
                     Console.ReadKey();
                     Console.Clear();
                 }
             }
-
         }
 
-        static string ConnectDB()
+        static void ShowAllStudents()
         {
-            string conn_str = "Data Source=COMP7A2\\SQLEXPRESS;" +
-                              "Initial Catalog=Academy;" +
-                              "Integrated Security=True;" +
-                              "TrustServerCertificate=True;";
-            return conn_str;
-        }
-
-        static void AddGroup(string conn_str, string group_name)
-        {
-            using (SqlConnection connection = new SqlConnection(conn_str))
+            var students = student_repo.FindAllStudents();
+            foreach (var student in students)
             {
-                connection.Open();
-                string sql_str = "INSERT INTO dbo.Groups(GroupName) VALUES(@name)";
-
-                using (SqlCommand command = new SqlCommand(sql_str, connection))
-                {
-
-                    command.Parameters.AddWithValue("@name", group_name);
-
-                    command.ExecuteNonQuery();
-                }
-
+                Console.WriteLine(student);
             }
         }
 
-        static void AddStudent(string conn_str, string first_name, string last_name, string age, string group_id)
+        static void ShowStudentById()
         {
-            using (SqlConnection connection = new SqlConnection(conn_str))
-            {
-                connection.Open();
-                string sql_str = "INSERT INTO dbo.Students(FirstName, LastName, Age, GroupId) " +
-                                 "VALUES(@firstName, @lastName, @age, @groupId)";
-
-                using (SqlCommand command = new SqlCommand(sql_str, connection))
-                {
-
-                    command.Parameters.AddWithValue("@firstName", first_name);
-                    command.Parameters.AddWithValue("@lastName", last_name);
-                    command.Parameters.AddWithValue("@age", age);
-                    command.Parameters.AddWithValue("@groupId", group_id);
-
-                    command.ExecuteNonQuery();
-
-                }
-
-            }
+            Console.WriteLine("Введите номер студента");
+            string choice = Console.ReadLine();
+            var student = student_repo.FindStudentById(choice);
+            Console.WriteLine(student);
         }
 
-        static void ShowAllStudents(string conn_str)
+        static void CreateStudent()
         {
-            using (SqlConnection connection = new SqlConnection(conn_str))
-            {
-                connection.Open();
-                string sql_str = "SELECT s.FirstName, s.LastName, s.Age , g.GroupName " +
-                                 "FROM Students AS s, Groups AS g " +
-                                 "WHERE s.GroupId = g.GroupId";
-
-                using (SqlCommand command = new SqlCommand(sql_str, connection))
-                {
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        string first_name = reader.GetString(0);
-                        string last_name = reader.GetString(1);
-                        int age = reader.GetInt32(2);
-                        string group_name = reader.GetString(3);
-                        Console.WriteLine($"| {first_name} | {last_name} | {age} | {group_name} |");
-                    }
-                }
-
-            }
+            Console.WriteLine("Введите имя:");
+            string first_name = Console.ReadLine();
+            Console.WriteLine("Введите фамилию:");
+            string last_name = Console.ReadLine();
+            Console.WriteLine("Введите возраст:");
+            string age = Console.ReadLine();
+            Console.WriteLine("Введите группу учащегося:");
+            string group_id = Console.ReadLine();
+            student_repo.AddStudent(first_name, last_name, age, group_id);
         }
 
-        static void FindStudentByName(string conn_str, string name)
+        static void ShowAllGroups()
         {
-            using (SqlConnection connection = new SqlConnection(conn_str))
+            var groups = group_repo.FindAllGroups();
+            foreach (var group in groups)
             {
-                connection.Open();
-                string sql_str = "SELECT FirstName, LastName, Age " +
-                                 "FROM Students " +
-                                 "WHERE FirstName = @name";
-
-
-                SqlCommand command = new SqlCommand(sql_str, connection);
-                command.Parameters.AddWithValue("@name", name);
-
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    string first_name = reader.GetString(0);
-                    string last_name = reader.GetString(1);
-                    int age = reader.GetInt32(2);
-                    Console.WriteLine($"| {first_name} | {last_name} | {age} |");
-                }
+                Console.WriteLine(group);
             }
         }
     }
