@@ -1,0 +1,6 @@
+@WebAcad_HostAddress = http://localhost:5258
+
+GET {{WebAcad_HostAddress}}/start/
+Accept: application/json
+
+###
