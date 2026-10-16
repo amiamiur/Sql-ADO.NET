@@ -1,4 +1,5 @@
 using AcademyApp.data;
+using AcademyApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,14 @@ app.MapGet("/students/all", (Studentrepos student_repo) =>
     var students = student_repo.FindAllStudents();
     return Results.Ok(students);
 });
+
+app.MapGet("/students/{id:int}", (int id, Studentrepos student_repo) =>
+{
+    string Id = id.ToString();
+    var student = student_repo.FindStudentById(Id);
+    return Results.Ok(student);
+});
+
 
 app.MapGet("/groups/all", (GroupRepos group_repo) =>
 {

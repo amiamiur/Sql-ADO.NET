@@ -17,6 +17,7 @@
             </tr>
         </thead>
         <tbody id="studentsBody"></tbody>
+        <tbody id="bodyTable"></tbody>
     </table>
 
     <h1>Список групп</h1>
@@ -29,49 +30,15 @@
         </thead>
         <tbody id="groupsBody"></tbody>
     </table>
+
+    <h1>Найти студента по ID</h1>
+    <div class="search-block">
+        <input type="number" id="searchId" placeholder="Введите ID" />
+        <button onclick="LoadStudentById()">Найти</button>
+        <p id="studentResult"></p>
+    </div>
+    <script src="js/root.js"></script>
     <script>
-        async function LoadAllStudents() {
-            const errorEl = document.getElementById('error');
-            const body = document.getElementById("studentsBody");
-            try {
-                const res = await fetch("/students/all");
-                if (!res.ok) throw new Error("HTTP" + res.status);
-                const students = await res.json();
-
-                body.innerHTML = '';
-                for (const s of students) {
-                    body.innerHTML += `
-                        <tr>
-                            <td>${s.firstName}</td>
-                            <td>${s.lastName}</td>
-                            <td>${s.age}</td>
-                            <td>${s.groupId}</td>
-                        </tr>`;
-                }
-                errorEl.textContent = '';
-            } catch (err) {
-                errorEl.textContent = "Ошибка загрузки студентов:" + err.message;
-            }
-        }
-        async function LoadGroups() {
-            const errorEl = document.getElementById("error");
-            const body = document.getElementById("groupsBody");
-            try {
-                const res = await fetch("/groups/all");
-                if (!res.ok) throw new Error("HTTP" + res.status)
-                const groups = await res.json();
-
-                body.innerHTML = '';
-                for (const g of groups) {
-                    body.innerHTML += `<tr>
-                    <td>${g.groupId}</td>
-                    <td>${g.groupName}</td>
-                    </tr>`;
-                }
-            } catch (err) {
-                errorEl.textContent = "Ошибка загрузки групп" + err.message;
-            }
-        }
 
         LoadAllStudents();
         LoadGroups();
