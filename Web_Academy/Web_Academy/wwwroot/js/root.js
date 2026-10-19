@@ -59,3 +59,24 @@ async function LoadStudentById() {
         result.textContent = "Ошибка: " + err.message;
     }
 }
+
+async function CreateStudent() {
+    try {
+        const res = await fetch("/student/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                firstname: student.first_name,
+                lastname: student.last_name,
+                age: student.age,
+                groupid: student.group_id
+            })
+        });
+
+        const created = await res.json();
+
+        } catch (err) {
+            result.textContent = "Ошибка: " + err.message;
+        }
+    });
+}

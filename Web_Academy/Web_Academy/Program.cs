@@ -31,6 +31,12 @@ app.MapGet("/students/{id:int}", (int id, Studentrepos student_repo) =>
     return Results.Ok(student);
 });
 
+app.MapPost("/students/add", (Student student, Studentrepos student_repo) =>
+{
+    student_repo.AddStudent(student);
+    return Results.Ok();
+}); 
+
 
 app.MapGet("/groups/all", (GroupRepos group_repo) =>
 {

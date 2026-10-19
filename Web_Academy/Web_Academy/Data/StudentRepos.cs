@@ -11,42 +11,34 @@ namespace AcademyApp.data
         {
             conn_str = connection_string;
         }
-        public List<student> FindAllStudents()
+        public List<Student> FindAllStudents()
         {
-            var students = new List<student>();
+            var Students = new List<Student>();
             using (var connection = new SqlConnection(conn_str))
             {
-                return connection.Query<student>("SELECT FirstName,LastName,Age,GroupId FROM Students ORDER BY LastName ASC").ToList();
+                return connection.Query<Student>("SELECT FirstName,LastName,Age,GroupId FROM Students ORDER BY LastName ASC").ToList();
             }
         }
 
-        public student FindStudentById(string id)
+        public Student FindStudentById(string id)
         {
-            var student1 = new student();
+            var student1 = new Student();
             using (var connection = new SqlConnection(conn_str))
             {
-                return connection.QueryFirstOrDefault<student>(
+                return connection.QueryFirstOrDefault<Student>(
                     "SELECT FirstName,LastName,Age,GroupId FROM Students WHERE StudentId = @Id;",
                     new { @Id = id }
                     );
             }
         }
 
-        public void AddStudent(string first_name, string last_name, string age, string group_id)
+        public void AddStudent(Student student)
         {
-            var student = new student
-            {
-                FirstName = first_name,
-                LastName = last_name,
-                Age = int.Parse(age),
-                GroupId = int.Parse(group_id)
-            };
-
             using (var connection = new SqlConnection(conn_str))
             {
-                string sql = "INSERT INTO Students(FirstName,LastName,Age,GroupId)" +
+                string sql = @"INSERT INTO Students(FirstName,LastName,Age,GroupId)" +
                     "VALUES(@FirstName,@LastName,@Age,@GroupId)";
-                connection.Execute(sql, new { @FirstName = first_name, @LastName = last_name, @Age = age, @GroupId = group_id });
+                connection.Execute(sql, student);
             }
         }
     }

@@ -30,11 +30,31 @@
         </thead>
         <tbody id="groupsBody"></tbody>
     </table>
+    <form id="createUserForm">
+        <label>
+            *
+            <input type="text" id="first_name" placeholder="Введите имя студента" />
+        </label>
+        <label>
+            *
+            <input type="text" id="last_name" placeholder="Введите фамилию студента" />
+        </label>
+        <label>
+            *
+            <input type="number" id="age" placeholder="Введите возраст студента" />
+        </label>
+        <label>
+            *
+            <input type="number" id="group_id" placeholder="Введите номер группы студента" />
+        </label>
+
+        <button onclick="CreateStudent()">Создать</button>
+    </form>
 
     <h1>Найти студента по ID</h1>
     <div class="search-block">
         <input type="number" id="searchId" placeholder="Введите ID" />
-        <button onclick="LoadStudentById()">Найти</button>
+        <button onclick="">Найти</button>
         <p id="studentResult"></p>
     </div>
     <script src="js/root.js"></script>
