@@ -44,7 +44,7 @@ async function LoadStudentById() {
     const id = document.getElementById("searchId").value;
     const result = document.getElementById("studentResult");
     try {
-        const res = await fetch(`students/${id}`);
+        const res = await fetch(`/students/${id}`);
 
         const s = await res.json();
 
@@ -61,22 +61,31 @@ async function LoadStudentById() {
 }
 
 async function CreateStudent() {
+    const errorEl = document.getElementById('error');
+    const result = document.getElementById('studentResult');
+
+    const student = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        age: parseInt(document.getElementById('age').value),
+        groupId: parseInt(document.getElementById('groupId').value)
+    };
+
     try {
-        const res = await fetch("/student/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                firstname: student.first_name,
-                lastname: student.last_name,
-                age: student.age,
-                groupid: student.group_id
-            })
+        const res = await fetch('/students/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(student)
         });
+        const text = await res.text();
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + text);
 
-        const created = await res.json();
+        const created = text ? JSON.parse(text) : null;
+        console.log('Добавлен:', created);
 
-        } catch (err) {
-            result.textContent = "Ошибка: " + err.message;
-        }
-    });
+        await LoadAllStudents();
+    } catch (err) {
+        if (errorEl) errorEl.textContent = 'Ошибка добавления: ' + err.message;
+        else console.error(err);
+    }
 }

@@ -26,15 +26,15 @@ app.MapGet("/students/all", (Studentrepos student_repo) =>
 
 app.MapGet("/students/{id:int}", (int id, Studentrepos student_repo) =>
 {
-    string Id = id.ToString();
-    var student = student_repo.FindStudentById(Id);
+    var student = student_repo.FindStudentById(id);
     return Results.Ok(student);
 });
 
 app.MapPost("/students/add", (Student student, Studentrepos student_repo) =>
 {
-    student_repo.AddStudent(student);
-    return Results.Ok();
+    var newId = student_repo.AddStudent(student);
+    student.StudentId = newId;
+    return Results.Ok(student);
 }); 
 
 

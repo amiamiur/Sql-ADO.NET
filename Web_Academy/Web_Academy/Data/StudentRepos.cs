@@ -13,33 +13,33 @@ namespace AcademyApp.data
         }
         public List<Student> FindAllStudents()
         {
-            var Students = new List<Student>();
-            using (var connection = new SqlConnection(conn_str))
-            {
-                return connection.Query<Student>("SELECT FirstName,LastName,Age,GroupId FROM Students ORDER BY LastName ASC").ToList();
-            }
+            using var connection = new SqlConnection(conn_str);
+            return connection.Query<Student>(
+                "SELECT StudentId, FirstName, LastName, Age, GroupId FROM Students ORDER BY LastName ASC"
+            ).ToList();
         }
 
-        public Student FindStudentById(string id)
+        public Student? FindStudentById(int id)
         {
-            var student1 = new Student();
-            using (var connection = new SqlConnection(conn_str))
-            {
-                return connection.QueryFirstOrDefault<Student>(
-                    "SELECT FirstName,LastName,Age,GroupId FROM Students WHERE StudentId = @Id;",
-                    new { @Id = id }
-                    );
-            }
+            using var connection = new SqlConnection(conn_str);
+            return connection.QueryFirstOrDefault<Student>(
+                "SELECT StudentId, FirstName, LastName, Age, GroupId FROM Students WHERE StudentId = @Id",
+                new { Id = id });
         }
 
-        public void AddStudent(Student student)
+        public int AddStudent(Student student)
         {
-            using (var connection = new SqlConnection(conn_str))
+            using var connection = new SqlConnection(conn_str);
+
+            const string sql = @"
+                INSERT INTO Students (FirstName, LastName, Age, GroupId)
+                VALUES (@FirstName, @LastName, @Age, @GroupId);
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            return connection.ExecuteScalar<int>(sql, new
             {
-                string sql = @"INSERT INTO Students(FirstName,LastName,Age,GroupId)" +
-                    "VALUES(@FirstName,@LastName,@Age,@GroupId)";
-                connection.Execute(sql, student);
-            }
+                student.FirstName,student.LastName,student.Age,student.GroupId
+            });
         }
     }
 }
