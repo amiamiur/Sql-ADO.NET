@@ -35,7 +35,20 @@ app.MapPost("/students/add", (Student student, Studentrepos student_repo) =>
     var newId = student_repo.AddStudent(student);
     student.StudentId = newId;
     return Results.Ok(student);
-}); 
+});
+
+app.MapPut("/students/{id:int}", (int id, Student student, Studentrepos student_repo) =>
+{
+    student.StudentId = id;
+    var rows = student_repo.UpdateStudent(student);
+    return rows > 0 ? Results.Ok(student) : Results.NotFound();
+});
+
+app.MapDelete("/students/{id:int}", (int id, Studentrepos student_repo) =>
+{
+    var rows = student_repo.DeleteStudent(id);
+    return rows > 0 ? Results.Ok() : Results.NotFound();
+});
 
 
 app.MapGet("/groups/all", (GroupRepos group_repo) =>

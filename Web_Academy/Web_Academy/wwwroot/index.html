@@ -10,10 +10,12 @@
     <table id="studentsTable">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Имя</th>
                 <th>Фамилия</th>
                 <th>Возраст</th>
-                <th>Номер группы</th>
+                <th>Номер Группы</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody id="studentsBody"></tbody>
@@ -31,6 +33,7 @@
         <tbody id="groupsBody"></tbody>
     </table>
     <form id="createUserForm">
+        <input type="hidden" id="studentId" />
         <label>
             *
             <input type="text" id="firstName" placeholder="Введите имя студента" />
@@ -47,8 +50,7 @@
             *
             <input type="number" id="groupId" placeholder="Введите номер группы студента" />
         </label>
-
-        <button type="button" onclick="CreateStudent()">Создать</button>
+        <button type="button" onclick="SaveStudent()">Сохранить</button>
     </form>
 
     <h1>Найти студента по ID</h1>

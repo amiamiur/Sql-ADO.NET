@@ -41,5 +41,21 @@ namespace AcademyApp.data
                 student.FirstName,student.LastName,student.Age,student.GroupId
             });
         }
+
+        public int UpdateStudent(Student student)
+        {
+            using var connection = new SqlConnection(conn_str);
+            const string sql = @"
+                UPDATE Students 
+                SET FirstName = @FirstName, LastName = @LastName, Age = @Age, GroupId = @GroupId
+                WHERE StudentId = @StudentId";
+            return connection.Execute(sql, student);
+        }
+
+        public int DeleteStudent(int id)
+        {
+            using var connection = new SqlConnection(conn_str);
+            return connection.Execute("DELETE FROM Students WHERE StudentId = @Id", new { Id = id });
+        }
     }
 }
