@@ -22,9 +22,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.MapGet("/students/all", (Studentrepos student_repo) =>
+app.MapGet("/students/all", async (CollegeDbContext db) =>
 {
-    var students = student_repo.FindAllStudents();
+    var students = await db.Students.ToListAsync();
     return Results.Ok(students);
 });
 
@@ -34,10 +34,10 @@ app.MapGet("/students/{id:int}", (int id, Studentrepos student_repo) =>
     return Results.Ok(student);
 });
 
-app.MapPost("/students/add", (Student student, Studentrepos student_repo) =>
+app.MapPost("/students/add", async (Student student, CollegeDbContext db) =>
 {
-    var newId = student_repo.AddStudent(student);
-    student.StudentId = newId;
+    db.Students.Add(student);
+    await db.SaveChangesAsync();
     return Results.Ok(student);
 });
 
@@ -55,10 +55,17 @@ app.MapDelete("/students/{id:int}", (int id, Studentrepos student_repo) =>
 });
 
 
-app.MapGet("/groups/all", (GroupRepos group_repo) =>
+app.MapGet("/groups/all", async (CollegeDbContext db) =>
 {
-    var groups = group_repo.FindAllGroups();
+    var groups = await db.Groups.ToListAsync();
     return Results.Ok(groups);
+});
+
+app.MapPost("/groups/add", async (Group group, CollegeDbContext db) =>
+{
+    db.Groups.Add(group);
+    await db.SaveChangesAsync();
+    return Results.Ok(group);
 });
 
 app.UseHttpsRedirection();
