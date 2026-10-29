@@ -1,5 +1,8 @@
-﻿namespace AcademyApp.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AcademyApp.Models
 {
+    [Table("Students")]
     public class Student
     {
         public int StudentId { get; set; }
@@ -7,10 +10,6 @@
         public string LastName { get; set; } = string.Empty;
         public int Age { get; set; }
         public int GroupId { get; set; }
-        public override string ToString()
-        {
-            return $"Студент - {FirstName} {LastName}; возраст - {Age} лет; номер группы - {GroupId}";
-        }
-
+        public Group? Group { get; set; }
     }
 }
