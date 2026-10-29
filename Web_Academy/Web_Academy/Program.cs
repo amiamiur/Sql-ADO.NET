@@ -66,7 +66,7 @@ app.MapDelete("/students/{id:int}", async (int id, CollegeDbContext db) =>
 
 app.MapGet("/groups/all", async (CollegeDbContext db) =>
 {
-    var groups = await db.Groups.ToListAsync();
+    var groups = await db.Groups.OrderBy(g => g.GroupId).ToListAsync();
     return Results.Ok(groups);
 });
 
