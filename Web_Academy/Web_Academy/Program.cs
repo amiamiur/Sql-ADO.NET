@@ -1,11 +1,15 @@
 using AcademyApp.data;
 using AcademyApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
-var conn_str = builder.Configuration.GetConnectionString("DefaultConnection");
+var conn_str = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
+builder.Services.AddDbContext<CollegeDbContext>(options =>
+    options.UseSqlServer(conn_str));
 
 builder.Services.AddSingleton(new Studentrepos(conn_str));
 builder.Services.AddSingleton(new GroupRepos(conn_str));

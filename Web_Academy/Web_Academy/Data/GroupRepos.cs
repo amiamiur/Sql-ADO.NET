@@ -13,11 +13,11 @@ namespace AcademyApp.data
             conn_str = connection_string;
         }
 
-        public List<group> FindAllGroups()
+        public List<Group> FindAllGroups()
         {
             using (var connection = new SqlConnection(conn_str))
             {
-                return connection.Query<group>("SELECT GroupId, GroupName From Groups ORDER BY GroupId ASC").ToList();
+                return connection.Query<Group>("SELECT GroupId, GroupName From Groups ORDER BY GroupId ASC").ToList();
             }
         }
     }
