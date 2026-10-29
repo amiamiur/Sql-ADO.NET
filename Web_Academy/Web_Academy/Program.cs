@@ -41,17 +41,26 @@ app.MapPost("/students/add", async (Student student, CollegeDbContext db) =>
     return Results.Ok(student);
 });
 
-app.MapPut("/students/{id:int}", (int id, Student student, Studentrepos student_repo) =>
+app.MapPut("/students/{id:int}", async (int id, Student student, CollegeDbContext db) =>
 {
-    student.StudentId = id;
-    var rows = student_repo.UpdateStudent(student);
-    return rows > 0 ? Results.Ok(student) : Results.NotFound();
+    var existingStudent = await db.Students.FindAsync(id);
+    existingStudent.FirstName = student.FirstName;
+    existingStudent.LastName = student.LastName;
+    existingStudent.Age = student.Age;
+    existingStudent.GroupId = student.GroupId;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(existingStudent);
 });
 
-app.MapDelete("/students/{id:int}", (int id, Studentrepos student_repo) =>
+app.MapDelete("/students/{id:int}", async (int id, CollegeDbContext db) =>
 {
-    var rows = student_repo.DeleteStudent(id);
-    return rows > 0 ? Results.Ok() : Results.NotFound();
+    var student = await db.Students.FindAsync(id);
+
+    db.Students.Remove(student);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
 });
 
 
